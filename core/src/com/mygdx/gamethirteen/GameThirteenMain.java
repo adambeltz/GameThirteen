@@ -34,7 +34,7 @@ public class GameThirteenMain extends ApplicationAdapter {
 
 	// Background
 	public Sprite backgroundSprite;
-	Rectangle[] borders;
+	static Rectangle[] borders;
 
 
 
@@ -43,7 +43,7 @@ public class GameThirteenMain extends ApplicationAdapter {
 	public StillObject brownCat;
 	public StillObject grayCat;
 	public StillObject cactus;
-	public StillObject berries;
+	public static ControlledObject berries;
 	public StillObject fSquare;
 	public StillObject lips;
 	public AnimatedObject redSquare;
@@ -70,17 +70,26 @@ public class GameThirteenMain extends ApplicationAdapter {
 		// Assets
 		assets = new Assets();
 
+
+
+
+		// berries is controlled
+
+		berries = new ControlledObject(assets.berriesAtlasRegion, 3, new Vector2(30,30));
+
+
 		// Game objects
 		brownCat = new StillObject(assets.brownCatAtlasRegion, 5, new Vector2(12, 10));
 		grayCat = new StillObject(assets.grayCatAtlasRegion, 4, new Vector2( 5, 5));
 		cactus = new StillObject(assets.cactusAtlasRegion, 6, new Vector2( 20, 25));
-		berries = new StillObject(assets.berriesAtlasRegion, 3, new Vector2(30,30));
 		fSquare = new StillObject(assets.fSquareAtlasRegion, 7, new Vector2( 40, 40));
 		lips = new StillObject(assets.lipsAtlasRegion, 3, new Vector2( 70, 35));
 		redSquare = new AnimatedObject(assets.redSquareKeyFrames, 5, new Vector2(47, 47));
 		yellowSquare = new AnimatedObject(assets.yellowSquareKeyFrames, 6, new Vector2(80, 10));
 		blueSquare = new AnimatedObject(assets.blueSquareKeyFrames, 4, new Vector2(5, 40));
 		sun = new AnimatedObject(assets.sunKeyFrames, 7, new Vector2(80, 40));
+
+		Gdx.app.log(String.valueOf(GameObject.stillObjects.size), " ");
 
 
 		shapeRenderer = new ShapeRenderer();
@@ -124,19 +133,23 @@ public class GameThirteenMain extends ApplicationAdapter {
 		batch.begin();
 		backgroundSprite.draw(batch);
 
-
+		berries.velocity.x = 0;
+		berries.velocity.y = 0;
 		if (Gdx.input.isKeyPressed(Input.Keys.UP)){
-			berries.move(0,10);
+			berries.velocity.y = 10;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-			berries.move(0, -10);
+			berries.velocity.y = -10;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)){
-			berries.move(-10, 0);
+			berries.velocity.x = -10;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
-			berries.move(10, 0);
+			berries.velocity.x = 10;
 		}
+
+
+
 
 
 
@@ -146,15 +159,16 @@ public class GameThirteenMain extends ApplicationAdapter {
 
 		// Update Objects
 
-
-		for (StillObject i : StillObject.stillObjects) {
+		for (GameObject i : StillObject.stillObjects) {
 			i.update();
 		}
 
 
+
 		// Render StillObjects
-		for (StillObject i : StillObject.stillObjects) {
-			i.render(batch);
+
+		for (GameObject i : StillObject.stillObjects) {
+			i.render(batch, delta);
 		}
 
 		// Render AnimatedObjects
@@ -168,12 +182,10 @@ public class GameThirteenMain extends ApplicationAdapter {
 		/*shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		shapeRenderer.setColor(Color.BLUE);
-		for (StillObject i : StillObject.stillObjects){
+		for (GameObject i : GameObject.stillObjects){
 			shapeRenderer.rect(i.rectangle.x, i.rectangle.y, i.rectangle.getWidth(), i.rectangle.getHeight());
 		}
-		for (AnimatedObject i : AnimatedObject.animatedObjects) {
-			shapeRenderer.rect(i.rectangle.x, i.rectangle.y, i.rectangle.getWidth(), i.rectangle.getHeight());
-		}
+
 		shapeRenderer.end();*/
 	}
 	
