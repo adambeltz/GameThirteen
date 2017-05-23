@@ -18,7 +18,7 @@ public class GameThirteenMain extends ApplicationAdapter {
 	SpriteBatch batch;
 	OrthographicCamera camera;
 
-	public static float delta;
+	public float delta;
 
 	ShapeRenderer shapeRenderer;
 
@@ -43,7 +43,7 @@ public class GameThirteenMain extends ApplicationAdapter {
 	public StillObject brownCat;
 	public StillObject grayCat;
 	public StillObject cactus;
-	public static ControlledObject berries;
+	public ControlledObject berries;
 	public StillObject fSquare;
 	public StillObject lips;
 	public AnimatedObject redSquare;
@@ -160,7 +160,7 @@ public class GameThirteenMain extends ApplicationAdapter {
 		// Update Objects
 
 		for (GameObject i : StillObject.stillObjects) {
-			i.update();
+			i.update(delta);
 		}
 
 
@@ -171,10 +171,7 @@ public class GameThirteenMain extends ApplicationAdapter {
 			i.render(batch, delta);
 		}
 
-		// Render AnimatedObjects
-		for (AnimatedObject i : AnimatedObject.animatedObjects){
-			i.render(batch, delta);
-		}
+
 
 
 		batch.end();
