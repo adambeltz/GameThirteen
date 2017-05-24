@@ -21,6 +21,7 @@ public abstract class GameObject {
     public float sizeFloat;
     public Rectangle rectangle;
     public float aspectRatio;
+    public Array<Rectangle> borders = new Array<Rectangle>();
 
 
     public GameObject(TextureAtlas.AtlasRegion AR, float sizeF, Vector2 coords) {
@@ -30,7 +31,8 @@ public abstract class GameObject {
         currentCoords = new Vector2(coords);
         buildSprite(AR);
         createRectangle();
-        this.sizeV2.x = sizeFloat * aspectRatio;
+        createBorders();
+        this.sizeV2.x = sizeFloat;
         this.sizeV2.y = sizeFloat * aspectRatio;
         setSize();
         GameObject.stillObjects.add(this);
@@ -45,7 +47,8 @@ public abstract class GameObject {
         currentCoords = new Vector2(coords);
         buildAnimatedSprite(AR);
         createRectangle();
-        this.sizeV2.x = sizeFloat * aspectRatio;
+        createBorders();
+        this.sizeV2.x = sizeFloat;
         this.sizeV2.y = sizeFloat * aspectRatio;
         GameObject.stillObjects.add(this);
     }
@@ -65,6 +68,7 @@ public abstract class GameObject {
     public void update(float delta){
         move(delta);
         rectangle.set(currentCoords.x, currentCoords.y, sizeV2.x, sizeV2.y);
+        updateBorders();
     }
 
     protected  void move(float delta){
@@ -77,23 +81,40 @@ public abstract class GameObject {
         for (int i = 0; i < stillObjects.size; i++) {
             // Collision
             if (this.rectangle.overlaps(stillObjects.get(i).rectangle) && !(this.rectangle.equals(stillObjects.get(i).rectangle))) {
+               Array<Rectangle> temp = stillObjects.get(i).borders;
 
+                    // Collision on top
+                    if (this.rectangle.overlaps(stillObjects.get(i).borders.get(0))){
+                        this.velocity.y = MathUtils.random(-20f, stillObjects.get(i).velocity.y);
+                        stillObjects.get(i).velocity.y *= -1;
+                    }
 
-                if (this.rectangle.x > stillObjects.get(i).rectangle.x) {
-                    // collision on left
-                    velocity.x = MathUtils.random(stillObjects.get(i).velocity.x, 20f);
-                    stillObjects.get(i).velocity.x = MathUtils.random(-20f, 0);
-                } else if (this.rectangle.x < stillObjects.get(i).rectangle.x) {
-                    velocity.x = MathUtils.random(-20f, stillObjects.get(i).velocity.x);
-                    stillObjects.get(i).velocity.x = MathUtils.random(0f, 20f);
-                } else if (this.rectangle.y > stillObjects.get(i).rectangle.y) {
-                    velocity.y = MathUtils.random(stillObjects.get(i).velocity.y, 20f);
-                    stillObjects.get(i).velocity.y = MathUtils.random(-20f, 0);
-                } else if (this.rectangle.y < stillObjects.get(i).rectangle.x) {
-                    velocity.y = MathUtils.random(-20f, stillObjects.get(i).velocity.y);
-                    stillObjects.get(i).velocity.y = MathUtils.random(-0f, 20f);
+                // Collision on Right
+                if (this.rectangle.overlaps(stillObjects.get(i).borders.get(1))){
+                    this.velocity.x = MathUtils.random(-20f, stillObjects.get(i).velocity.x);
+                    stillObjects.get(i).velocity.x *= -1;
 
                 }
+
+                // Collision on left
+                if (this.rectangle.overlaps(stillObjects.get(i).borders.get(2))){
+                    this.velocity.x = MathUtils.random(stillObjects.get(i).velocity.x, 20f);
+                    stillObjects.get(i).velocity.x *= -1;
+
+                }
+
+                // Collision on bottom
+                if (this.rectangle.overlaps(stillObjects.get(i).borders.get(3))){
+                    this.velocity.y = MathUtils.random(stillObjects.get(i).velocity.y, 20f);
+                    stillObjects.get(i).velocity.y *= -1;
+                }
+
+
+
+
+
+
+
             }
         }
 
@@ -118,5 +139,19 @@ public abstract class GameObject {
 
     public void createRectangle(){
         rectangle = new Rectangle(currentCoords.x, currentCoords.y, sizeV2.x, sizeV2.y);
+    }
+
+    public void createBorders(){
+        borders.add(new Rectangle(currentCoords.x, currentCoords.y, sizeV2.x, .1f));
+        borders.add(new Rectangle(currentCoords.x, currentCoords.y, .1f, sizeV2.y));
+        borders.add(new Rectangle(sizeV2.x, currentCoords.y, -.1f, sizeV2.y));
+        borders.add(new Rectangle(currentCoords.x, sizeV2.y, sizeV2.x, -.1f));
+    }
+
+    public void updateBorders(){
+        borders.set(0, new Rectangle(currentCoords.x, currentCoords.y, sizeV2.x, .1f));
+        borders.get(1).set(currentCoords.x, currentCoords.y, .1f, sizeV2.y);
+        borders.get(2).set(currentCoords.x + sizeV2.x, currentCoords.y, -.1f, sizeV2.y);
+        borders.get(3).set(currentCoords.x, currentCoords.y + sizeV2.y, sizeV2.x, -.1f);
     }
 }

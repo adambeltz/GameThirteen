@@ -148,25 +148,12 @@ public class GameThirteenMain extends ApplicationAdapter {
 			berries.velocity.x = 10;
 		}
 
-
-
-
-
-
-
-
-
-
 		// Update Objects
-
 		for (GameObject i : StillObject.stillObjects) {
 			i.update(delta);
 		}
 
-
-
 		// Render StillObjects
-
 		for (GameObject i : StillObject.stillObjects) {
 			i.render(batch, delta);
 		}
@@ -182,6 +169,14 @@ public class GameThirteenMain extends ApplicationAdapter {
 		for (GameObject i : GameObject.stillObjects){
 			shapeRenderer.rect(i.rectangle.x, i.rectangle.y, i.rectangle.getWidth(), i.rectangle.getHeight());
 		}
+
+		shapeRenderer.setColor(Color.LIME);
+		for (GameObject i : GameObject.stillObjects){
+			for (int j = 0; j < 4; j++) {
+				shapeRenderer.rect(i.borders.get(j).x, i.borders.get(j).y, i.borders.get(j).getWidth(), i.borders.get(j).getHeight());
+			}
+		}
+
 
 		shapeRenderer.end();*/
 	}
