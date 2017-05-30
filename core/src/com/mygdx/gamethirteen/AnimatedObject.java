@@ -28,12 +28,32 @@ public class AnimatedObject extends GameObject {
 
 
     public void render(SpriteBatch batch, float delta) {
+        super.render(batch, delta);
         stateTime += delta;
         currentFrame = animation.getKeyFrame(stateTime);
         batch.draw(currentFrame, currentCoords.x, currentCoords.y, sizeV2.x, sizeV2.y);
     }
 
+    @Override
+    public void collisionCheck() {
+        super.collisionCheck();
 
+    }
+
+    @Override
+    public void newObject() {
+
+        AnimatedObject newAO = new AnimatedObject(GameThirteenMain.assets.arrayKeyFrames.get(MathUtils.random(0,3)), 2, new Vector2(MathUtils.random(0f, 100f), MathUtils.random(0f, 50f)));
+        for (int i = 0; i < stillObjects.size; i++) {
+
+            if (newAO.rectangle.overlaps(stillObjects.get(i).rectangle) && !(newAO.rectangle.equals(stillObjects.get(i).rectangle))) {
+                stillObjects.pop();
+                break;
+            }
+        }
+        Gdx.app.log("Stillobjects size: ", String.valueOf(stillObjects.size));
+
+    }
 }
 
 

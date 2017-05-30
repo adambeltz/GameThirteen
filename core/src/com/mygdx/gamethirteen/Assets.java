@@ -26,6 +26,8 @@ public class Assets implements Disposable, AssetErrorListener {
     public Array<TextureAtlas.AtlasRegion> yellowSquareKeyFrames;
     public Array<TextureAtlas.AtlasRegion> blueSquareKeyFrames;
     public Array<TextureAtlas.AtlasRegion> sunKeyFrames;
+    public Array<Array<TextureAtlas.AtlasRegion>> arrayKeyFrames;
+    public Array<TextureAtlas.AtlasRegion> arrayAtlasRegions;
 
     public Assets(){
         init();
@@ -36,6 +38,8 @@ public class Assets implements Disposable, AssetErrorListener {
         assetManager = new AssetManager();
         assetManager.load("atlas.atlas", TextureAtlas.class);
         assetManager.finishLoading();
+        arrayKeyFrames = new Array<Array<TextureAtlas.AtlasRegion>>();
+        arrayAtlasRegions = new Array<TextureAtlas.AtlasRegion>();
         textureAtlas = assetManager.get("atlas.atlas");
         backgroundAtlasRegion = textureAtlas.findRegion("bluebackground1366x768");
         brownCatAtlasRegion = textureAtlas.findRegion("cat_resize");
@@ -48,6 +52,16 @@ public class Assets implements Disposable, AssetErrorListener {
         blueSquareKeyFrames = textureAtlas.findRegions("square2");
         yellowSquareKeyFrames = textureAtlas.findRegions("square3");
         sunKeyFrames = textureAtlas.findRegions("sun");
+        arrayKeyFrames.add(textureAtlas.findRegions("square1"));
+        arrayKeyFrames.add(blueSquareKeyFrames);
+        arrayKeyFrames.add(yellowSquareKeyFrames);
+        arrayKeyFrames.add(sunKeyFrames);
+        arrayAtlasRegions.add(brownCatAtlasRegion);
+        arrayAtlasRegions.add(grayCatAtlasRegion);
+        arrayAtlasRegions.add(lipsAtlasRegion);
+        arrayAtlasRegions.add(fSquareAtlasRegion);
+        arrayAtlasRegions.add(cactusAtlasRegion);
+
     }
 
 

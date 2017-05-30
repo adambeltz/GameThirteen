@@ -32,6 +32,21 @@ public class StillObject extends GameObject {
         sprite.setSize(sizeV2.x, sizeV2.y);
     }
 
+    @Override
+    public void newObject() {
+        StillObject newAO = new StillObject(GameThirteenMain.assets.arrayAtlasRegions.get(MathUtils.random(0,4)), 2, new Vector2(MathUtils.random(0f, 100f), MathUtils.random(0f, 50f)));
+        for (int i = 0; i < stillObjects.size; i++) {
+
+            if (newAO.rectangle.overlaps(stillObjects.get(i).rectangle) && !(newAO.rectangle.equals(stillObjects.get(i).rectangle))) {
+                stillObjects.pop();
+                break;
+            }
+        }
+        Gdx.app.log("Stillobjects size: ", String.valueOf(stillObjects.size));
+
+    }
+
+
     public void update(float delta) {
         super.update(delta);
         sprite.setPosition(currentCoords.x, currentCoords.y);
@@ -40,8 +55,11 @@ public class StillObject extends GameObject {
 
 
     public void render(SpriteBatch batch, float delta) {
+        super.render(batch,delta);
         sprite.draw(batch);
     }
+
+
 
 
 
