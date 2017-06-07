@@ -4,12 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-import com.sun.org.apache.regexp.internal.RE;
 
 public class StillObject extends GameObject {
 
@@ -34,15 +30,16 @@ public class StillObject extends GameObject {
 
     @Override
     public void newObject() {
-        StillObject newAO = new StillObject(GameThirteenMain.assets.arrayAtlasRegions.get(MathUtils.random(0,4)), 2, new Vector2(MathUtils.random(0f, 100f), MathUtils.random(0f, 50f)));
-        for (int i = 0; i < stillObjects.size; i++) {
+        Gdx.app.log("new","StillObject");
+        StillObject newAO = new StillObject(GameThirteenMain.assets.arrayAtlasRegions.get(MathUtils.random(0,4)), MathUtils.random(2f, 4f), new Vector2(MathUtils.random(0f, 100f), MathUtils.random(0f, 50f)));
+        for (int i = 0; i < objectsArray.size; i++) {
 
-            if (newAO.rectangle.overlaps(stillObjects.get(i).rectangle) && !(newAO.rectangle.equals(stillObjects.get(i).rectangle))) {
-                stillObjects.pop();
+            if (newAO.rectangle.overlaps(objectsArray.get(i).rectangle) && !(newAO.rectangle.equals(objectsArray.get(i).rectangle))) {
+                objectsArray.pop();
                 break;
             }
         }
-        Gdx.app.log("Stillobjects size: ", String.valueOf(stillObjects.size));
+
 
     }
 

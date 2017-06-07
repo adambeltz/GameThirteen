@@ -1,8 +1,6 @@
 package com.mygdx.gamethirteen;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 public class ControlledObject extends StillObject {
@@ -16,9 +14,9 @@ public class ControlledObject extends StillObject {
 
 
     public void collisionCheckC() {
-        for (int i = 0; i < stillObjects.size; i++) {
+        for (int i = 0; i < objectsArray.size; i++) {
             // Collision
-            if (this.rectangle.overlaps(stillObjects.get(i).rectangle) && !(this.rectangle.equals(stillObjects.get(i).rectangle))) {
+            if (this.rectangle.overlaps(objectsArray.get(i).rectangle) && !(this.rectangle.equals(objectsArray.get(i).rectangle))) {
                 toBeRemoved = i;
                 controlledObCollision = true;
 

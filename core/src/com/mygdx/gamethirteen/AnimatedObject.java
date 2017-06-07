@@ -3,7 +3,6 @@ package com.mygdx.gamethirteen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -35,23 +34,24 @@ public class AnimatedObject extends GameObject {
     }
 
     @Override
-    public void collisionCheck() {
-        super.collisionCheck();
+    public void collisionCheck(float delta) {
+        super.collisionCheck(delta);
 
     }
 
     @Override
     public void newObject() {
+        Gdx.app.log("new","AnicatmedObject");
 
-        AnimatedObject newAO = new AnimatedObject(GameThirteenMain.assets.arrayKeyFrames.get(MathUtils.random(0,3)), 2, new Vector2(MathUtils.random(0f, 100f), MathUtils.random(0f, 50f)));
-        for (int i = 0; i < stillObjects.size; i++) {
+        AnimatedObject newAO = new AnimatedObject(GameThirteenMain.assets.arrayKeyFrames.get(MathUtils.random(0,3)), MathUtils.random(0.5f,3f), new Vector2(MathUtils.random(0f, 100f), MathUtils.random(0f, 50f)));
+        for (int i = 0; i < objectsArray.size; i++) {
 
-            if (newAO.rectangle.overlaps(stillObjects.get(i).rectangle) && !(newAO.rectangle.equals(stillObjects.get(i).rectangle))) {
-                stillObjects.pop();
+            if (newAO.rectangle.overlaps(objectsArray.get(i).rectangle) && !(newAO.rectangle.equals(objectsArray.get(i).rectangle))) {
+                objectsArray.pop();
                 break;
             }
         }
-        Gdx.app.log("Stillobjects size: ", String.valueOf(stillObjects.size));
+
 
     }
 }

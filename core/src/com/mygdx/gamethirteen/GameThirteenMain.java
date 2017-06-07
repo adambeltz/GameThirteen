@@ -7,7 +7,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -62,21 +61,21 @@ public class GameThirteenMain extends ApplicationAdapter {
 
 
         // berries is controlled
-        berries = new ControlledObject(assets.berriesAtlasRegion, 3, new Vector2(30, 30));
+        berries = new ControlledObject(assets.berriesAtlasRegion, 3, new Vector2(90, 1));
 
 
         // Game objects
-        brownCat = new StillObject(assets.brownCatAtlasRegion, 5, new Vector2(12, 10));
+        brownCat = new StillObject(assets.brownCatAtlasRegion, 4, new Vector2(12, 10));
         grayCat = new StillObject(assets.grayCatAtlasRegion, 4, new Vector2(5, 5));
         cactus = new StillObject(assets.cactusAtlasRegion, 6, new Vector2(20, 25));
         fSquare = new StillObject(assets.fSquareAtlasRegion, 7, new Vector2(40, 40));
         lips = new StillObject(assets.lipsAtlasRegion, 3, new Vector2(70, 35));
-        redSquare = new AnimatedObject(assets.redSquareKeyFrames, 5, new Vector2(47, 47));
-        yellowSquare = new AnimatedObject(assets.yellowSquareKeyFrames, 6, new Vector2(80, 10));
-        blueSquare = new AnimatedObject(assets.blueSquareKeyFrames, 4, new Vector2(5, 40));
-        sun = new AnimatedObject(assets.sunKeyFrames, 7, new Vector2(80, 40));
-        sun.velocity.x = MathUtils.random(-10f, 10f);
-        sun.velocity.y = MathUtils.random(-10f, 10f);
+        redSquare = new AnimatedObject(assets.redSquareKeyFrames, 5.1f, new Vector2(47, 47));
+        yellowSquare = new AnimatedObject(assets.yellowSquareKeyFrames, 6.1f, new Vector2(80, 10));
+        blueSquare = new AnimatedObject(assets.blueSquareKeyFrames, 4.1f, new Vector2(5, 40));
+        sun = new AnimatedObject(assets.sunKeyFrames, 12, new Vector2(80, 40));
+        sun.velocity.x = MathUtils.random(-20f, 20f);
+        sun.velocity.y = MathUtils.random(-20f, 20f);
 
 
 
@@ -102,10 +101,12 @@ public class GameThirteenMain extends ApplicationAdapter {
         batch = new SpriteBatch();
 
 
+
     }
 
     @Override
     public void render() {
+
 
         delta = Gdx.graphics.getDeltaTime();
 
@@ -122,29 +123,37 @@ public class GameThirteenMain extends ApplicationAdapter {
         berries.velocity.x = 0;
         berries.velocity.y = 0;
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            berries.velocity.y = 10;
+            berries.velocity.y = 15;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            berries.velocity.y = -10;
+            berries.velocity.y = -15;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            berries.velocity.x = -10;
+            berries.velocity.x = -15;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            berries.velocity.x = 10;
+            berries.velocity.x = 15;
         }
+
+
+
+
 
         // Update Objects
 		berries.collisionCheckC();
 
 
 
-        for (GameObject i : StillObject.stillObjects) {
+        for (GameObject i: StillObject.objectsArray){
+            i.collisionPartnerID = 0;
+        }
+
+        for (GameObject i : StillObject.objectsArray) {
             i.update(delta);
         }
 
         // Render StillObjects
-        for (GameObject i : StillObject.stillObjects) {
+        for (GameObject i : StillObject.objectsArray) {
             i.render(batch, delta);
         }
 
@@ -154,12 +163,12 @@ public class GameThirteenMain extends ApplicationAdapter {
 		/*shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setProjectionMatrix(camera.combined);
 		shapeRenderer.setColor(Color.BLUE);
-		for (GameObject i : GameObject.stillObjects){
+		for (GameObject i : GameObject.objectsArray){
 			shapeRenderer.rect(i.rectangle.x, i.rectangle.y, i.rectangle.getWidth(), i.rectangle.getHeight());
 		}
 
 		shapeRenderer.setColor(Color.LIME);
-		for (GameObject i : GameObject.stillObjects){
+		for (GameObject i : GameObject.objectsArray){
 			for (int j = 0; j < 4; j++) {
 				shapeRenderer.rect(i.borders.get(j).x, i.borders.get(j).y, i.borders.get(j).getWidth(), i.borders.get(j).getHeight());
 			}
