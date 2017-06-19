@@ -8,6 +8,8 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -20,6 +22,8 @@ public class GameThirteenMain extends ApplicationAdapter {
     SpriteBatch batch;
     OrthographicCamera camera;
 
+    OrthographicCamera GUICamera;
+
     public float delta;
 
     ShapeRenderer shapeRenderer;
@@ -31,6 +35,7 @@ public class GameThirteenMain extends ApplicationAdapter {
     public static Assets assets;
     public static Array<ParticleSpawner> particles;
     public static Array<SmallExplosion> smallExplosions;
+    public static Array<Trail> trailParticles;
 
 
     // Background
@@ -52,10 +57,19 @@ public class GameThirteenMain extends ApplicationAdapter {
     Music backgroundMusic;
 
 
+    public static int score;
+    public int animatedTally = 0;
+    public int stillTally = 0;
+
+
     @Override
     public void create() {
+
+        score = 0;
+
         particles = new Array<ParticleSpawner>();
         smallExplosions = new Array<SmallExplosion>();
+        trailParticles = new Array<Trail>();
 
        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Too_Excited.mp3"));
         backgroundMusic.setVolume(.2f);
@@ -67,6 +81,11 @@ public class GameThirteenMain extends ApplicationAdapter {
         camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT);
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         camera.update();
+
+        GUICamera = new OrthographicCamera();
+        GUICamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        //GUICamera.position.set(0,0,0);
+        GUICamera.update();
 
         // Assets
         assets = new Assets();
@@ -103,7 +122,7 @@ public class GameThirteenMain extends ApplicationAdapter {
         borders = new Rectangle[4];
         borders[0] = new Rectangle(0f, 0f, 100f, 0.1f);
         borders[1] = new Rectangle(0f, 0f, 0.1f, 100f);
-        borders[2] = new Rectangle(0f, camera.viewportHeight, 100f, 0.1f);
+        borders[2] = new Rectangle(0f, camera.viewportHeight - 5, 100f, 0.1f);
         borders[3] = new Rectangle(100f, 0f, 0.1f, 100f);
 
 
@@ -132,6 +151,7 @@ public class GameThirteenMain extends ApplicationAdapter {
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
+
         backgroundSprite.draw(batch);
 
         berries.velocity.x = 0;
@@ -148,6 +168,9 @@ public class GameThirteenMain extends ApplicationAdapter {
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             berries.velocity.x = 15;
         }
+
+
+
 
 
 
@@ -175,13 +198,28 @@ public class GameThirteenMain extends ApplicationAdapter {
             i.render(batch, delta);
         }
 
+        for (Trail i : trailParticles) {
+            i.render(batch, delta);
+        }
+
         // Render StillObjects
         for (GameObject i : StillObject.objectsArray) {
             i.render(batch, delta);
         }
 
+        // Update Score Bar's numbers
+        animatedTally = 0;
+        stillTally = 0;
+        for (GameObject i : StillObject.objectsArray){
+            if (i.getClass().equals(AnimatedObject.class)){
+                animatedTally++;
+            }else {
+                stillTally++;
+            }
+        }
 
-        batch.end();
+        renderGUI(batch);
+        //batch.end();
 
         Gdx.app.log("small explosions size :" , String.valueOf(smallExplosions.size));
 
@@ -220,7 +258,21 @@ public class GameThirteenMain extends ApplicationAdapter {
             i.dispose();
         }
 
+        for (Trail i : trailParticles) {
 
+            i.pe.dispose();
+            i.dispose();
+        }
+
+    }
+
+    public void renderGUI(SpriteBatch batch){
+        batch.setProjectionMatrix(GUICamera.combined);
+        renderScore(batch);
+        renderBarText(batch);
+        batch.end();
+        renderBar();
+        camera.update();
 
     }
 
@@ -265,5 +317,38 @@ public class GameThirteenMain extends ApplicationAdapter {
         public boolean scrolled(int amount) {
             return false;
         }
+    }
+
+    public void renderScore(SpriteBatch batch){
+        BitmapFont scoreFont = assets.font;
+        scoreFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        scoreFont.getData().setScale(1.5f);
+        scoreFont.setColor(Color.PINK);
+        scoreFont.draw(batch, "COLLECTED: " + String.valueOf(score), 50, Gdx.graphics.getHeight() - 40);
+
+    }
+
+    public void renderBarText(SpriteBatch batch){
+        BitmapFont barFont = assets.font;
+        barFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        barFont.getData().setScale(1.5f);
+        barFont.setColor(Color.PINK);
+        barFont.draw(batch, String.valueOf(animatedTally), Gdx.graphics.getWidth()/3, Gdx.graphics.getHeight() -14);
+        barFont.draw(batch, String.valueOf(stillTally), Gdx.graphics.getWidth()/3 * 2 - 25, Gdx.graphics.getHeight() -14);
+    }
+
+
+    public void renderBar(){
+        // Animated Objects Progress
+
+
+        Rectangle recta = new Rectangle(Gdx.graphics.getWidth()/3, Gdx.graphics.getHeight() - 50, (Gdx.graphics.getWidth() / 3) * ((float)animatedTally / ((float)animatedTally + (float)stillTally)), 15);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setProjectionMatrix(GUICamera.combined);
+        shapeRenderer.setColor(0.972549f, 1.0f, 0.0f, 1f);
+        shapeRenderer.rect(Gdx.graphics.getWidth()/3, Gdx.graphics.getHeight() - 50, Gdx.graphics.getWidth()/3, 15);
+        shapeRenderer.setColor(1f, 0.65f, 0.988f,1f);
+        shapeRenderer.rect(recta.x, recta.y, recta.getWidth(), recta.getHeight());
+        shapeRenderer.end();
     }
 }

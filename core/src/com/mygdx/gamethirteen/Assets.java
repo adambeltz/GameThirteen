@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetErrorListener;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
@@ -28,6 +29,7 @@ public class Assets implements Disposable, AssetErrorListener {
     public Array<TextureAtlas.AtlasRegion> sunKeyFrames;
     public Array<Array<TextureAtlas.AtlasRegion>> arrayKeyFrames;
     public Array<TextureAtlas.AtlasRegion> arrayAtlasRegions;
+    public BitmapFont font;
 
     public Assets(){
         init();
@@ -63,6 +65,9 @@ public class Assets implements Disposable, AssetErrorListener {
         arrayAtlasRegions.add(fSquareAtlasRegion);
         arrayAtlasRegions.add(cactusAtlasRegion);
 
+        font = new BitmapFont();
+
+
     }
 
 
@@ -85,5 +90,6 @@ public class Assets implements Disposable, AssetErrorListener {
     public void dispose() {
         assetManager.dispose();
         textureAtlas.dispose();
+        font.dispose();
     }
 }

@@ -3,30 +3,33 @@ package com.mygdx.gamethirteen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 
-public class ParticleSpawner {
+public class Trail {
 
     ParticleEffect pe;
 
-    public ParticleSpawner(String z, float x, float y){
+    public Trail(float x, float y){
         pe = new ParticleEffect();
-        pe.load(Gdx.files.internal(z), Gdx.files.internal(""));
+        pe.load(Gdx.files.internal("trail.p"), Gdx.files.internal(""));
         pe.getEmitters().first().setPosition(x, y);
         pe.start();
-        GameThirteenMain.particles.add(this);
+        GameThirteenMain.trailParticles.add(this);
+
     }
 
 
     public void render(SpriteBatch batch, float delta) {
-       pe.update(delta);
-       pe.draw(batch);
-       if (pe.isComplete()){
-           GameThirteenMain.particles.removeIndex(0);
-       }
+        pe.update(delta);
+        pe.draw(batch);
+
+
     }
 
-
+    public void explosion(float x, float y){
+        pe.reset();
+        pe.setPosition(x,y);
+        pe.start();
+    }
 
 
 
@@ -36,3 +39,5 @@ public class ParticleSpawner {
         pe.dispose();
     }
 }
+
+

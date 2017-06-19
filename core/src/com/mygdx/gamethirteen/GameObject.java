@@ -136,7 +136,7 @@ public abstract class GameObject implements Disposable {
                     objectsArray.get(i).collisionPartnerID = this.id;
                     collision(this,objectsArray.get(i), delta);
 
-                    if (objectsArray.size < 80) {
+                    if (objectsArray.size < 50) {
                         objectsArray.get(MathUtils.random(0, objectsArray.size - 1)).newObject();
                         getScore();
                     }
