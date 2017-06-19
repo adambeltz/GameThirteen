@@ -1,18 +1,17 @@
 package com.mygdx.gamethirteen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 
 
-public abstract class
-
-
-GameObject {
+public abstract class GameObject implements Disposable {
     public static Array<GameObject> objectsArray = new Array<GameObject>();
     public Vector2 velocity;
     public Vector2 lastCoords;
@@ -28,7 +27,17 @@ GameObject {
     public float weight;
     public float id;
     public float collisionPartnerID;
+    Sound beep = Gdx.audio.newSound(Gdx.files.internal("Beeps6.mp3"));
+    Sound blip = Gdx.audio.newSound(Gdx.files.internal("Blips16.mp3"));
+    Sound ohYeah = Gdx.audio.newSound(Gdx.files.internal("Oh Yeah.wav"));
+    public static int stillObjects = 0;
+    public static int animatedObjects = 0;
+    public static int animatedObjectsCollected;
 
+
+
+
+    public GameObject(){}
 
 
     public GameObject(TextureAtlas.AtlasRegion AR, float sizeF, Vector2 coords) {
@@ -45,6 +54,9 @@ GameObject {
         GameObject.objectsArray.add(this);
         this.weight = sizeFloat * 1.2f;
         id = this.hashCode();
+        stillObjects++;
+
+
 
 
     }
@@ -63,6 +75,7 @@ GameObject {
         GameObject.objectsArray.add(this);
         this.weight = sizeFloat * 1.2f;
         this.id = this.hashCode();
+        animatedObjects++;
 
 
 
@@ -96,6 +109,17 @@ GameObject {
     protected void move(float delta) {
 
         if (controlledObCollision == true) {
+            if (objectsArray.get(toBeRemoved).getClass().equals(AnimatedObject.class)){
+                animatedObjectsCollected ++;
+                if (animatedObjectsCollected % 10 == 0){
+                    ohYeah.play(.5f);
+                }
+                else {
+                beep.play(.5f);}
+
+            } else {
+                blip.play(.4f);
+            }
             objectsArray.removeIndex(toBeRemoved);
             controlledObCollision = false;
         }
@@ -170,7 +194,10 @@ GameObject {
         // collision on colliders left
         if (collider.rectangle.overlaps(collidee.borders.get(2))){
             if (leftCollisionOffset < topCollisionOffset && leftCollisionOffset < bottomCollisionOffset){
-                collider.currentCoords.x += leftCollisionOffset;
+                collider.currentCoords.x += (leftCollisionOffset * 1.1);
+
+                explosion(collidee.rectangle.x + collidee.rectangle.getWidth(),
+                        (collidee.rectangle.y + (collidee.rectangle.y + collidee.rectangle.getHeight())) / 2);
             }
 
             float newCollliderVel;
@@ -192,7 +219,10 @@ GameObject {
 
 
             if (rightCollisionOffset < topCollisionOffset && rightCollisionOffset < bottomCollisionOffset){
-                collider.currentCoords.x -= rightCollisionOffset;
+                collider.currentCoords.x -= (rightCollisionOffset * 1.1);
+
+                explosion(collidee.rectangle.x,
+                        (collidee.rectangle.y + (collidee.rectangle.y + collidee.rectangle.getHeight())) / 2);
             }
 
             float newCollliderVel;
@@ -213,7 +243,9 @@ GameObject {
         if (collider.rectangle.overlaps(collidee.borders.get(0))){
 
             if (topCollisionOffset < rightCollisionOffset && topCollisionOffset < leftCollisionOffset){
-                collider.currentCoords.y -= topCollisionOffset;
+                collider.currentCoords.y -= (topCollisionOffset * 1.1);
+                explosion((collidee.rectangle.x + (collidee.rectangle.x + collidee.rectangle.getWidth())) / 2,
+                        collidee.rectangle.y);
             }
 
 
@@ -234,7 +266,10 @@ GameObject {
         if (collider.rectangle.overlaps(collidee.borders.get(3))){
 
             if (bottomCollisionOffset < rightCollisionOffset && bottomCollisionOffset < leftCollisionOffset){
-                collider.currentCoords.y += bottomCollisionOffset;
+                collider.currentCoords.y += (bottomCollisionOffset * 1.1) ;
+
+                explosion((collidee.rectangle.x + (collidee.rectangle.x + collidee.rectangle.getWidth())) / 2,
+                        collidee.rectangle.y + collidee.rectangle.getHeight());
             }
 
 
@@ -252,22 +287,41 @@ GameObject {
 
         }
 
+
+
+
     }
 
-    public void getScore(){
-        int stillObjects = 0;
-        int animatedObjects = 0;
-        for (int k = 0; k < objectsArray.size; k++) {
-            if (objectsArray.get(k).getClass().equals(AnimatedObject.class)){
-                animatedObjects++;
-            } else {
-                stillObjects++;
+    public void explosion(float x, float y){
+        // Creates a pool of smallExplosions to use only creates a new instance of SmallExplosions if none are complete
+        if (GameThirteenMain.smallExplosions.size == 0){
+            new SmallExplosion(x,y);
+        } else {
+            int j = GameThirteenMain.smallExplosions.size;
+            for (int i = 0; i < j; i++) {
+                if (GameThirteenMain.smallExplosions.get(i).pe.isComplete()){
+                    GameThirteenMain.smallExplosions.get(i).explosion(x, y);
+                    break;
+                } if (i + 1 == j){
+                    new SmallExplosion(x, y);
+                }
             }
 
         }
-                Gdx.app.log("Still Objects: " + stillObjects, "Animated Objects: " + animatedObjects);
     }
 
+    public void getScore(){
+        Gdx.app.log("Still Objects: " + stillObjects, "Animated Objects: " + animatedObjects);
+    }
+
+    @Override
+    public void dispose() {
+        blip.dispose();
+        beep.dispose();
+        ohYeah.dispose();
 
 
+
+
+    }
 }

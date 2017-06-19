@@ -10,5 +10,7 @@ public class DesktopLauncher {
 		new LwjglApplication(new GameThirteenMain(), config);
 		config.width = 1366;
 		config.height = 768;
+		//config.samples = 2;  // antialiasing
+
 	}
 }

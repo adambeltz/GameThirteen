@@ -47,6 +47,7 @@ public class Assets implements Disposable, AssetErrorListener {
         lipsAtlasRegion = textureAtlas.findRegion("lips_resize");
         berriesAtlasRegion = textureAtlas.findRegion("berries_resize");
         fSquareAtlasRegion = textureAtlas.findRegion("box_front_175x158");
+
         cactusAtlasRegion = textureAtlas.findRegion("cactus_resize");
         redSquareKeyFrames = textureAtlas.findRegions("square1");
         blueSquareKeyFrames = textureAtlas.findRegions("square2");

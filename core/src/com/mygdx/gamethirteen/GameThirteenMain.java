@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 public class GameThirteenMain extends ApplicationAdapter {
     SpriteBatch batch;
@@ -27,6 +29,8 @@ public class GameThirteenMain extends ApplicationAdapter {
 
 
     public static Assets assets;
+    public static Array<ParticleSpawner> particles;
+    public static Array<SmallExplosion> smallExplosions;
 
 
     // Background
@@ -45,10 +49,18 @@ public class GameThirteenMain extends ApplicationAdapter {
     public AnimatedObject yellowSquare;
     public AnimatedObject blueSquare;
     public AnimatedObject sun;
+    Music backgroundMusic;
 
 
     @Override
     public void create() {
+        particles = new Array<ParticleSpawner>();
+        smallExplosions = new Array<SmallExplosion>();
+
+       backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Too_Excited.mp3"));
+        backgroundMusic.setVolume(.2f);
+        backgroundMusic.setLooping(true);
+        backgroundMusic.play();
         delta = Gdx.graphics.getDeltaTime();
 
         // Camera
@@ -76,6 +88,8 @@ public class GameThirteenMain extends ApplicationAdapter {
         sun = new AnimatedObject(assets.sunKeyFrames, 12, new Vector2(80, 40));
         sun.velocity.x = MathUtils.random(-20f, 20f);
         sun.velocity.y = MathUtils.random(-20f, 20f);
+
+
 
 
 
@@ -152,6 +166,15 @@ public class GameThirteenMain extends ApplicationAdapter {
             i.update(delta);
         }
 
+        // Render Particle Effects
+        for (ParticleSpawner i : particles) {
+            i.render(batch, delta);
+        }
+
+        for (SmallExplosion i : smallExplosions) {
+            i.render(batch, delta);
+        }
+
         // Render StillObjects
         for (GameObject i : StillObject.objectsArray) {
             i.render(batch, delta);
@@ -159,6 +182,8 @@ public class GameThirteenMain extends ApplicationAdapter {
 
 
         batch.end();
+
+        Gdx.app.log("small explosions size :" , String.valueOf(smallExplosions.size));
 
 		/*shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -182,6 +207,19 @@ public class GameThirteenMain extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
         shapeRenderer.dispose();
+        backgroundMusic.dispose();
+        for (ParticleSpawner i : particles) {
+
+            i.pe.dispose();
+            i.dispose();
+        }
+
+        for (SmallExplosion i : smallExplosions) {
+
+            i.pe.dispose();
+            i.dispose();
+        }
+
 
 
     }
