@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 public class GameThirteenMain extends ApplicationAdapter {
@@ -61,10 +62,20 @@ public class GameThirteenMain extends ApplicationAdapter {
     public int animatedTally = 0;
     public int stillTally = 0;
 
+    Vector2 firstTouchXY;
+    Vector2 lastFrameTouchXY;
+    Vector2 currentTouchXY;
+    Vector2 lastFrameVelocityXY;
+
 
     @Override
     public void create() {
 
+
+        firstTouchXY = new Vector2();
+        lastFrameTouchXY = new Vector2(-1,0);
+        currentTouchXY = new Vector2();
+        lastFrameVelocityXY = new Vector2();
         score = 0;
 
         particles = new Array<ParticleSpawner>();
@@ -72,7 +83,7 @@ public class GameThirteenMain extends ApplicationAdapter {
         trailParticles = new Array<Trail>();
 
        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("Too_Excited.mp3"));
-        backgroundMusic.setVolume(.2f);
+        backgroundMusic.setVolume(.1f);
         backgroundMusic.setLooping(true);
         backgroundMusic.play();
         delta = Gdx.graphics.getDeltaTime();
@@ -154,8 +165,7 @@ public class GameThirteenMain extends ApplicationAdapter {
 
         backgroundSprite.draw(batch);
 
-        berries.velocity.x = 0;
-        berries.velocity.y = 0;
+
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             berries.velocity.y = 15;
         }
@@ -167,6 +177,61 @@ public class GameThirteenMain extends ApplicationAdapter {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             berries.velocity.x = 15;
+
+        }
+        if (Gdx.input.isTouched()){
+
+
+
+            currentTouchXY.x = Gdx.input.getX();
+            currentTouchXY.y = Gdx.input.getY();
+
+            if (lastFrameTouchXY.x == -1){
+                lastFrameTouchXY.set(currentTouchXY);
+            }
+            Gdx.app.log("lastFrameTouchXY: " , String.valueOf(lastFrameTouchXY));
+
+
+
+            float hypLength = lastFrameTouchXY.dst(currentTouchXY);
+            Gdx.app.log("hypLenght", String.valueOf(hypLength));
+
+            if (hypLength > 5.5){
+
+                float adjLenth  = (float)currentTouchXY.x - (float)lastFrameTouchXY.x;
+                float oppLength = (float)currentTouchXY.y - (float)lastFrameTouchXY.y;
+                float cos = adjLenth / hypLength;
+                float newX = 20 * cos;
+
+
+                float sin = oppLength / hypLength;
+                float newY = 20 * sin;
+
+                if (newX < 0 || newX > 0) {
+                berries.velocity.x = newX;
+                } else if (newX == 0){
+                berries.velocity.x = newX;
+                }
+
+
+                if (newY < 0 || newY > 0){
+                berries.velocity.y = -newY;
+
+                } else if (newY == 0){
+                    berries.velocity.y = -newY;
+                }
+            }
+
+            Gdx.app.log("Current Touch: ", String.valueOf(currentTouchXY));
+            Gdx.app.log("lastFrameTouchXY", String.valueOf(lastFrameTouchXY));
+            //Gdx.app.log("first Touch: ", String.valueOf(firstTouchXY));
+            Gdx.app.log("berries coords: ", String.valueOf(berries.currentCoords));
+
+            lastFrameTouchXY.set(currentTouchXY);
+
+
+
+
         }
 
 
@@ -221,7 +286,6 @@ public class GameThirteenMain extends ApplicationAdapter {
         renderGUI(batch);
         //batch.end();
 
-        Gdx.app.log("small explosions size :" , String.valueOf(smallExplosions.size));
 
 		/*shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -285,7 +349,17 @@ public class GameThirteenMain extends ApplicationAdapter {
 
         @Override
         public boolean keyUp(int keycode) {
-            return false;
+            if (keycode == Input.Keys.RIGHT || keycode == Input.Keys.LEFT){
+                berries.velocity.x = 0;
+            }
+
+            if (keycode == Input.Keys.UP || keycode == Input.Keys.DOWN){
+                berries.velocity.y = 0;
+            }
+
+
+
+            return true;
         }
 
         @Override
@@ -295,12 +369,16 @@ public class GameThirteenMain extends ApplicationAdapter {
 
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+
+
             return false;
         }
 
         @Override
         public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-            return false;
+            resetVelocity(berries);
+            lastFrameTouchXY.x = -1;
+            return true;
         }
 
         @Override
@@ -350,5 +428,9 @@ public class GameThirteenMain extends ApplicationAdapter {
         shapeRenderer.setColor(1f, 0.65f, 0.988f,1f);
         shapeRenderer.rect(recta.x, recta.y, recta.getWidth(), recta.getHeight());
         shapeRenderer.end();
+    }
+
+    public void resetVelocity(GameObject object){
+        object.velocity.set(0,0);
     }
 }
