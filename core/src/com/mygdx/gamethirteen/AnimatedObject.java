@@ -43,7 +43,7 @@ public class AnimatedObject extends GameObject {
     public void newObject() {
         Gdx.app.log("new","AnicatmedObject");
 
-        AnimatedObject newAO = new AnimatedObject(GameThirteenMain.assets.arrayKeyFrames.get(MathUtils.random(0,3)), MathUtils.random(0.5f,4f), new Vector2(MathUtils.random(0f, 100f), MathUtils.random(0f, 50f)));
+        AnimatedObject newAO = new AnimatedObject(GameThirteenMain.assets.arrayKeyFrames.get(MathUtils.random(0,3)), MathUtils.random(0.5f,4f), new Vector2(MathUtils.random(0f, 100f), MathUtils.random(0f, Constants.VIEWPORT_HEIGHT - 5)));
         for (int i = 0; i < objectsArray.size; i++) {
 
             if (newAO.rectangle.overlaps(objectsArray.get(i).rectangle) && !(newAO.rectangle.equals(objectsArray.get(i).rectangle))) {

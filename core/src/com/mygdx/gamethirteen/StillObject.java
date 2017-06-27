@@ -31,7 +31,7 @@ public class StillObject extends GameObject {
     @Override
     public void newObject() {
         Gdx.app.log("new","StillObject");
-        StillObject newAO = new StillObject(GameThirteenMain.assets.arrayAtlasRegions.get(MathUtils.random(0,4)), MathUtils.random(2f, 4f), new Vector2(MathUtils.random(0f, 100f), MathUtils.random(0f, 50f)));
+        StillObject newAO = new StillObject(GameThirteenMain.assets.arrayAtlasRegions.get(MathUtils.random(0,4)), MathUtils.random(2f, 4f), new Vector2(MathUtils.random(0f, 100f), MathUtils.random(0f, Constants.VIEWPORT_HEIGHT-5)));
         for (int i = 0; i < objectsArray.size; i++) {
 
             if (newAO.rectangle.overlaps(objectsArray.get(i).rectangle) && !(newAO.rectangle.equals(objectsArray.get(i).rectangle))) {
